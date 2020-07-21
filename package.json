@@ -6,7 +6,7 @@
   "author": "Nick Moreton",
   "dependencies": {
     "body-parser": "^1.x.x",
-    "express": "^4.x.x",
+    "express": "^4.17.1",
     "request": "^2.69.0"
   },
   "license": "ISC",
