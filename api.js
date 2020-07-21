@@ -4,9 +4,9 @@ module.exports = function (req, res, next) {
   var id = req.query.id,
     sheet = req.query.sheet || 1,
     query = req.query.q || '',
-    useIntegers = req.query.integers || true,
+    useIntegers = req.query.integers || false,
     showRows = req.query.rows || true,
-    showColumns = req.query.columns || true,
+    showColumns = req.query.columns || false,
     url = 'https://spreadsheets.google.com/feeds/list/' + id + '/' + sheet + '/public/values?alt=json';
 
   request(url, function (error, response, body) {
