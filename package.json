@@ -7,10 +7,15 @@
   "dependencies": {
     "body-parser": "^1.x.x",
     "express": "^4.17.1",
+    "npm-watch": "^0.6.0",
     "request": "^2.69.0"
   },
   "license": "ISC",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "watch": "npm-watch start"
+  },
+  "watch": {
+    "start": "*.js"
   }
 }
