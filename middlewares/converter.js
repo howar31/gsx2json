@@ -55,7 +55,8 @@ module.exports = function (req, res, next) {
         if (showRows === true) {
           responseObj['rows'] = rows;
         }
-        return res.status(200).json(responseObj);
+        req.config = responseObj
+        next()
       } else {
         return res.status(response.statusCode).json(error);
       }

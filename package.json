@@ -7,6 +7,7 @@
   "dependencies": {
     "body-parser": "^1.x.x",
     "express": "^4.17.1",
+    "lodash": "^4.17.19",
     "npm-watch": "^0.6.0",
     "request": "^2.69.0"
   },

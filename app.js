@@ -1,8 +1,9 @@
-var api = require('./api');
-
+var bodyParser = require('body-parser');
+var configRegulator = require('./middlewares/about-us/config-regulator')
+var converter = require('./middlewares/converter')
 var express = require('express');
 var path = require('path');
-var bodyParser = require('body-parser');
+var uploader = require('./middlewares/about-us/gcs-uploader')
 
 var app = express();
 
@@ -18,8 +19,8 @@ app.use(function(req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// get api
-app.get('/api', api);
+// api
+app.get('/about-us', converter, configRegulator, uploader)
 
 // error handler
 app.use(function(err, req, res, next) {
