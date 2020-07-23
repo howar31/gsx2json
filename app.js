@@ -3,7 +3,7 @@ var configRegulator = require('./middlewares/about-us/config-regulator')
 var converter = require('./middlewares/converter')
 var express = require('express');
 var path = require('path');
-var uploader = require('./middlewares/about-us/gcs-uploader')
+var uploader = require('./middlewares/about-us/uploader')
 
 var app = express();
 
