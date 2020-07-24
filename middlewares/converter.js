@@ -1,33 +1,66 @@
-var request = require('request');
+const axios = require('axios')
+//lodash
+const get = require('lodash/get')
 
-module.exports = function (req, res, next) {
-  var id = req.query.id,
-    sheet = req.query.sheet || 1,
-    query = req.query.q || '',
-    useIntegers = req.query.integers || false,
-    showRows = req.query.rows || true,
-    showColumns = req.query.columns || false,
-    url = 'https://spreadsheets.google.com/feeds/list/' + id + '/' + sheet + '/public/values?alt=json';
+const _ = {
+  get
+}
 
-  request(url, function (error, response, body) {
-    if (!error && response.statusCode === 200) {
-      var data = JSON.parse(response.body);
-      var responseObj = {};
-      var rows = [];
-      var columns = {};
+/*
+ * @typedef {Object} responseObj
+ * @property {array} rows - containing each row of data as an object
+ * @property {array} columns - containing the names of each column
+ */
+
+/*
+ * This function converts google spreadsheet data to config 
+ *
+ * @param {string} options.id - sheet id of google spreadsheet 
+ * @param {string} options.sheet - index of spreadsheet
+ * @param {bool} options.useIntegers - convert integer to string or not
+ * @param {bool} options.showRows - show rows in result or not
+ * @param {bool} options.showColumns - show columns in result or not
+ * @returns {responseObj}
+ */
+module.exports = function (options) {
+  const defaultOptions = {
+    sheet: 1,
+    query: '',
+    useIntegers: false,
+    showRows: true,
+    showColumns: false
+  }
+
+  const { 
+    id, 
+    query,
+    sheet, 
+    showColumns,
+    showRows, 
+    useIntegers
+  } = Object.assign({}, defaultOptions, options)
+  
+  const url = 'https://spreadsheets.google.com/feeds/list/' + id + '/' + sheet + '/public/values?alt=json'
+
+  return axios.get(url)
+    .then(res => {
+      const data = _.get(res, 'data')
+      const responseObj = {}
+      const rows = [];
+      const columns = {};
       if (data && data.feed && data.feed.entry) {
-        for (var i = 0; i < data.feed.entry.length; i++) {
-          var entry = data.feed.entry[i];
-          var keys = Object.keys(entry);
-          var newRow = {};
-          var queried = false;
-          for (var j = 0; j < keys.length; j++) {
-            var gsxCheck = keys[j].indexOf('gsx$');
+        for (let i = 0; i < data.feed.entry.length; i++) {
+          const entry = data.feed.entry[i];
+          const keys = Object.keys(entry);
+          let newRow = {};
+          let queried = false;
+          for (let j = 0; j < keys.length; j++) {
+            const gsxCheck = keys[j].indexOf('gsx$');
             if (gsxCheck > -1) {
-              var key = keys[j];
-              var name = key.substring(4);
-              var content = entry[key];
-              var value = content.$t;
+              const key = keys[j];
+              const name = key.substring(4);
+              const content = entry[key];
+              const value = content.$t;
               if (value.toLowerCase().indexOf(query.toLowerCase()) > -1) {
                 queried = true;
               }
@@ -55,11 +88,10 @@ module.exports = function (req, res, next) {
         if (showRows === true) {
           responseObj['rows'] = rows;
         }
-        req.config = responseObj
-        next()
-      } else {
-        return res.status(response.statusCode).json(error);
+        return responseObj
       }
-    }
-  });
-};
+    })
+    .catch((err) => {
+      console.error('error:', err)
+    })
+}
