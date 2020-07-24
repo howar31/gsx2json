@@ -1,6 +1,6 @@
 {
   "name": "@twreporter/gsx2json",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.0",
   "description": "Google Spreadsheet to JSON API app",
   "author": "Nick Moreton",
   "dependencies": {
