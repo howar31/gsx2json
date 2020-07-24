@@ -3,7 +3,7 @@ const axios = require('axios')
 const get = require('lodash/get')
 
 const _ = {
-  get
+  get,
 }
 
 /*
@@ -28,7 +28,7 @@ module.exports = function (options) {
     query: '',
     useIntegers: false,
     showRows: true,
-    showColumns: false
+    showColumns: false,
   }
 
   const { 
@@ -37,7 +37,7 @@ module.exports = function (options) {
     sheet, 
     showColumns,
     showRows, 
-    useIntegers
+    useIntegers,
   } = Object.assign({}, defaultOptions, options)
   
   const url = 'https://spreadsheets.google.com/feeds/list/' + id + '/' + sheet + '/public/values?alt=json'
@@ -46,50 +46,49 @@ module.exports = function (options) {
     .then(res => {
       const data = _.get(res, 'data')
       const responseObj = {}
-      const rows = [];
-      const columns = {};
+      const rows = []
+      const columns = {}
       if (data && data.feed && data.feed.entry) {
         for (let i = 0; i < data.feed.entry.length; i++) {
-          const entry = data.feed.entry[i];
-          const keys = Object.keys(entry);
-          let newRow = {};
-          let queried = false;
+          const entry = data.feed.entry[i]
+          const keys = Object.keys(entry)
+          let queried = false
+          let newRow = {}
           for (let j = 0; j < keys.length; j++) {
-            const gsxCheck = keys[j].indexOf('gsx$');
+            const gsxCheck = keys[j].indexOf('gsx$')
             if (gsxCheck > -1) {
-              const key = keys[j];
-              const name = key.substring(4);
-              const content = entry[key];
-              const value = content.$t;
+              const key = keys[j]
+              const name = key.substring(4)
+              const content = entry[key]
+              let value = content.$t
               if (value.toLowerCase().indexOf(query.toLowerCase()) > -1) {
-                queried = true;
+                queried = true
               }
               if (useIntegers === true && !isNaN(value)) {
-                value = Number(value);
+                value = Number(value)
               }
-              newRow[name] = value;
+              newRow[name] = value
               if (queried === true) {
-                if (!columns.hasOwnProperty(name)) {
-                  columns[name] = [];
-                  columns[name].push(value);
-                } else {
-                  columns[name].push(value);
-                }
+                if (!Object.prototype.hasOwnProperty.call(columns, name))
+                  columns[name] = []
+                columns[name].push(value)
+              } else {
+                columns[name].push(value)
               }
             }
           }
           if (queried === true) {
-            rows.push(newRow);
+            rows.push(newRow)
           }
         }
-        if (showColumns === true) {
-          responseObj['columns'] = columns;
-        }
-        if (showRows === true) {
-          responseObj['rows'] = rows;
-        }
-        return responseObj
       }
+      if (showColumns === true) {
+        responseObj['columns'] = columns
+      }
+      if (showRows === true) {
+        responseObj['rows'] = rows
+      }
+      return responseObj
     })
     .catch((err) => {
       console.error('error:', err)
