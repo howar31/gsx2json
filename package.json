@@ -1,5 +1,5 @@
 {
-  "name": "gsx2json",
+  "name": "@twreporter/gsx2json",
   "version": "1.0.0",
   "description": "Google Spreadsheet to JSON API app",
   "author": "Nick Moreton",
@@ -28,5 +28,11 @@
     "lint",
     "validate",
     "test"
+  ],
+  "files": [
+    "commands/*",
+    "actions/converter.js",
+    "actions/about-us/*",
+    "storages/*"
   ]
 }
