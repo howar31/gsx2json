@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const commander = require('commander')
-const configRegulator = require('../middlewares/about-us/config-regulator')
-const converter = require('../middlewares/converter')
-const uploader = require('../middlewares/about-us/uploader')
+const configRegulator = require('../actions/about-us/config-regulator')
+const converter = require('../actions/converter')
+const uploader = require('../actions/about-us/uploader')
 const program = new commander.Command()
 
 // For main site about-us page
