@@ -1,43 +1,55 @@
-# GSX2JSON - Google Spreadsheet to JSON API service.
+# @twreporter/gsx2json
 
-## About
+Use command line to get spreadsheet data, sanitize it and save the result as a JSON file to google cloud storage.
 
-One useful feature of Google Spreadsheets is the ability to access the data as JSON by using a particular feed URL. However, this is a bit fiddly to do, and the resulting JSON is pretty unreadable, with usable data buried deep inside objects.
-
-This API connects to your spreadsheet and santizes the data, providing simple, readable JSON for you to use in your app.
+We use this tool to update [about us page](https://www.twreporter.org/about-us).
 
 ## Install
 
-- Run `npm install`
-- Run `node app`
+```
+// intsall globally
+$ npm i -g @twreporter/gsx2json
+```
 
 ## Usage
 
-First, you must publish your spreadsheet to the web, using `File -> Publish To Web` in your Google Spreadsheet.
+First, make sure the target spreadsheet is published to the web, using `File -> Publish To Web` in your Google Spreadsheet.
 
-You can then access your readable JSON API using the `/api` endpoint. You can change this in app.js.
+### Update about-us page 
+
+#### Command Line Help
+```
+// --help
+$ about-us --help
 
 ```
-http://example.com/api?id=SPREADSHEET_ID&sheet=SHEET_NUMBER
+
+```
+Options:
+  --id <spreadsheet>  google spreadsheet id (default: "16CVkhaSw5sxwjlSt1c0nLzxG7qzEmeO2gCymVsSY6PE")
+  --section <index>   section index number (default: "2")
+  --branch <branch>   git branch (one of "master", "staging", "release") (default: "master")
+  -h, --help          display help for command
 ```
 
-This will update live with changes to the spreadsheet.
+#### Example: update section2 config for master branch (only for development)
 
-### Parameters
+```
+$ about-us --section 2 --branch master
+```
 
-**id (required):** The ID of your document. This is the big long aplha-numeric code in the middle of your document URL.
+When it is done, a new config file `section2.master.json` will be uploaded to gcs and replace the old one.
+This file is required by [about us page](https://www.twreporter.org/about-us).
 
-**sheet (optional):** The number of the individual sheet you want to get data from. Your first sheet is 1, your second sheet is 2, etc. If no sheet is entered then 1 is the default.
+#### Example: update section3 config for release branch
 
-**q (optional):** A simple query string. This is case insensitive and will add any row containing the string in any cell to the filtered result.
+```
+$ about-us --section 3 --branch release
+```
 
-**integers (optional - default: true)**: Setting 'integers' to false will return numbers as a string.
+When it is done, a new config file `section3.release.json` will be uploaded to gcs and replace the old one.
 
-**rows (optional - default: true)**: Setting 'rows' to false will return only column data.
-
-**columns (optional - default: true)**: Setting 'columns' to false will return only row data.
-
-## Example Response
+## Example data structure after sanitizing
 
 There are two sections to the returned data - Columns (containing the names of each column), and Rows (containing each row of data as an object.
 

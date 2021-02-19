@@ -1,16 +1,38 @@
 {
-  "name": "gsx2json",
-  "version": "1.0.0",
+  "name": "@twreporter/gsx2json",
+  "version": "1.0.0-beta.0",
   "description": "Google Spreadsheet to JSON API app",
-  "main": "app.js",
   "author": "Nick Moreton",
   "dependencies": {
-    "body-parser": "^1.x.x",
-    "express": "^4.x.x",
-    "request": "^2.69.0"
+    "@google-cloud/storage": "^5.1.2",
+    "@twreporter/errors": "^1.1.0",
+    "axios": "^0.19.2",
+    "commander": "^6.0.0",
+    "lodash": "^4.17.19"
   },
   "license": "ISC",
   "scripts": {
-    "start": "node app.js"
-  }
+    "lint": "eslint -c .eslintrc . --fix",
+    "validate": "npm ls",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "bin": {
+    "about-us": "./commands/about-us.js"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.5.0",
+    "precommit-hook": "^3.0.0"
+  },
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ],
+  "files": [
+    "commands/*",
+    "actions/converter.js",
+    "actions/about-us/*",
+    "storages/*"
+  ]
 }
