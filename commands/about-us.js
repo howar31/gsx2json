@@ -9,10 +9,10 @@ const program = new commander.Command()
 program
   .description('update configs for about-us page')
   .option('--id <spreadsheet>', 'google spreadsheet id', '16CVkhaSw5sxwjlSt1c0nLzxG7qzEmeO2gCymVsSY6PE')
-  .option('--section <index>', 'section index number', '2')
+  .option('--sheetName <name>', 'sheet name', 'test')
+  .option('--section <index>', 'section index number', '5')
   .option('--branch <branch>', 'git branch (one of "master", "staging", "release")', 'master')
   .action(async (options) => {
-    options.sheet = parseInt(options.section, 10) - 1
     const rawConfig = await converter(options)
     const config = configRegulator(rawConfig, options)
     await uploader(config, options)
