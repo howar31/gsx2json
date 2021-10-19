@@ -45,19 +45,19 @@ module.exports = function (options) {
       const dataByRow = []
       _.forEach(datas, (data, index) => {
         if (index === 0) {
-	  return
-	}
+          return
+        }
         const row = _.reduce(data, (result, value, key) => {
-	  const title = titles[key]
-	  result[title] = value
-	  return result
-	}, {})
+          const title = titles[key]
+          result[title] = value
+          return result
+        }, {})
         dataByRow.push(row)
       })
 
       return { rows: dataByRow }
     })
     .catch((err) => {
-      console.error('error:', err)
+      return Promise.reject(err)
     })
 }

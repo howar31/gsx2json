@@ -39,6 +39,14 @@ Options:
   -h, --help          display help for command
 ```
 
+#### More about --section parameter
+
+--section index will be used in two place:
+- determine whether to group data or not (config-regulater)
+- upload filename: section<section index>.<branch>.json
+
+--section parameter should be corresbond with --sheetName parameter
+
 #### Example: update section2 config for master branch (only for development)
 
 ```
