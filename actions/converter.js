@@ -1,96 +1,63 @@
 const axios = require('axios')
+//dotenv
+require('dotenv').config()
 //lodash
 const get = require('lodash/get')
+const forEach = require('lodash/forEach')
+const reduce = require('lodash/reduce')
 
 const _ = {
   get,
+  forEach,
+  reduce,
 }
+
+const API_KEY = process.env.API_KEY
 
 /*
  * @typedef {Object} responseObj
  * @property {array} rows - containing each row of data as an object
- * @property {array} columns - containing the names of each column
  */
 
 /*
  * This function converts google spreadsheet data to config 
  *
- * @param {string} options.id - sheet id of google spreadsheet 
- * @param {string} options.sheet - index of spreadsheet
- * @param {bool} options.useIntegers - convert integer to string or not
- * @param {bool} options.showRows - show rows in result or not
- * @param {bool} options.showColumns - show columns in result or not
+ * @param {string} options.id - id of google spreadsheet 
+ * @param {string} options.sheetName - target sheet name
  * @returns {responseObj}
  */
 module.exports = function (options) {
   const defaultOptions = {
-    sheet: 1,
-    query: '',
-    useIntegers: false,
-    showRows: true,
-    showColumns: false,
+    sheetName: 'test',
   }
 
   const { 
     id, 
-    query,
-    sheet, 
-    showColumns,
-    showRows, 
-    useIntegers,
+    sheetName, 
   } = Object.assign({}, defaultOptions, options)
   
-  const url = 'https://spreadsheets.google.com/feeds/list/' + id + '/' + sheet + '/public/values?alt=json'
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${id}/values/'${sheetName}'?alt=json&key=${API_KEY}`
 
-  return axios.get(url)
+  return axios.get(encodeURI(url))
     .then(res => {
-      const data = _.get(res, 'data')
-      const responseObj = {}
-      const rows = []
-      const columns = {}
-      if (data && data.feed && data.feed.entry) {
-        for (let i = 0; i < data.feed.entry.length; i++) {
-          const entry = data.feed.entry[i]
-          const keys = Object.keys(entry)
-          let queried = false
-          let newRow = {}
-          for (let j = 0; j < keys.length; j++) {
-            const gsxCheck = keys[j].indexOf('gsx$')
-            if (gsxCheck > -1) {
-              const key = keys[j]
-              const name = key.substring(4)
-              const content = entry[key]
-              let value = content.$t
-              if (value.toLowerCase().indexOf(query.toLowerCase()) > -1) {
-                queried = true
-              }
-              if (useIntegers === true && !isNaN(value)) {
-                value = Number(value)
-              }
-              newRow[name] = value
-              if (queried === true) {
-                if (!Object.prototype.hasOwnProperty.call(columns, name))
-                  columns[name] = []
-                columns[name].push(value)
-              } else {
-                columns[name].push(value)
-              }
-            }
-          }
-          if (queried === true) {
-            rows.push(newRow)
-          }
+      const datas = _.get(res, 'data.values')
+      const titles = datas[0]
+      const dataByRow = []
+      _.forEach(datas, (data, index) => {
+        if (index === 0) {
+          return
         }
-      }
-      if (showColumns === true) {
-        responseObj['columns'] = columns
-      }
-      if (showRows === true) {
-        responseObj['rows'] = rows
-      }
-      return responseObj
+        const row = _.reduce(data, (result, value, key) => {
+          const title = titles[key]
+          result[title] = value
+          return result
+        }, {})
+        dataByRow.push(row)
+      })
+
+      return { rows: dataByRow }
     })
     .catch((err) => {
-      console.error('error:', err)
+      return Promise.reject(err)
     })
 }
