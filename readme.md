@@ -4,13 +4,6 @@ Use command line to get spreadsheet data, sanitize it and save the result as a J
 
 We use this tool to update [about us page](https://www.twreporter.org/about-us).
 
-## Install
-
-```
-// intsall globally
-$ npm i -g @twreporter/gsx2json
-```
-
 ## Usage
 
 1. Make sure the target spreadsheet is publishly viewable to the web, using `File -> Publish To Web` in your Google Spreadsheet.
