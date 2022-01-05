@@ -15,13 +15,15 @@
   "scripts": {
     "lint": "eslint -c .eslintrc . --fix",
     "validate": "npm ls",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "changelog-maker": "changelog-maker"
   },
   "bin": {
     "about-us": "./commands/about-us.js"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
+    "changelog-maker": "^2.3.0",
     "eslint": "^7.5.0",
     "precommit-hook": "^3.0.0"
   },
